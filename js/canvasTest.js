@@ -15,6 +15,8 @@ canvas.height = window.innerHeight;
 
 let squares = [];
 
+refreshCanvas();
+
 function addSquare() {
   const newSquare = {
     x: Math.random() * (canvas.width - 50),
