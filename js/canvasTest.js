@@ -2,12 +2,14 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
 const addSquareButton = document.getElementById('addSquareButton');
+const addRectangleButton = document.getElementById('addRectangleButton');
 const refreshButton = document.getElementById('refreshButton');
 
 let isDragging = false;
 let selectedSquare = null;
 
 addSquareButton.addEventListener('click', addSquare);
+addRectangleButton.addEventListener('click', addRectangle);
 refreshButton.addEventListener('click', refreshCanvas);
 
 canvas.width = window.innerWidth;
@@ -23,6 +25,29 @@ function addSquare() {
     y: Math.random() * (canvas.height - 50),
     width: 50,
     height: 50,
+    color: getRandomColor(),
+    prevX: 0,
+    prevY: 0
+  };
+
+  for (let i = 0; i < squares.length; i++) {
+    if (checkCollision(newSquare, squares[i])) {
+      newSquare.x = Math.random() * (canvas.width - 50);
+      newSquare.y = Math.random() * (canvas.height - 50);
+      i = -1;
+    }
+  }
+
+  squares.push(newSquare);
+  redrawCanvas();
+}
+
+function addRectangle() {
+  const newSquare = {
+    x: Math.random() * (canvas.width - 50),
+    y: Math.random() * (canvas.height - 50),
+    width: 50,
+    height: 100,
     color: getRandomColor(),
     prevX: 0,
     prevY: 0
