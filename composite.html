@@ -1,0 +1,69 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <h1>This is Canvas Test!</h1>
+    <h2>Hellow World!</h2>
+    <p>Use the buttons bellow to add Squares and Circles to the canva and move them around!</p>
+    <button onclick="addSquare()">Adicionar Quadrado</button>
+    <button onclick="addCircle()">Adicionar Círculo</button>
+    <div id="canvasContainer">
+        <canvas id="myCanvas" height="1080"></canvas>
+    </div>      
+    <script src="js/composition/geometricalForm.js"></script>
+    <script src="js/composition/composite.js"></script>
+    <script src="js/composition/Square.js"></script>
+    <script src="js/composition/Circle.js"></script>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width  = window.innerWidth;
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        function addSquare() {
+            const diameter = Math.floor(Math.random() * 50) + 30;
+            const sideLength = Math.floor(Math.random() * 50) + 30;
+            const square = new Square(getUniqueId(), sideLength);
+            const randomX = Math.floor(Math.random() * (canvasWidth - diameter)) + diameter / 2;
+            const randomY = Math.floor(Math.random() * (canvasHeight - diameter)) + diameter / 2
+            square.setPosition(randomX, randomY);
+            drawShape(square);
+        }
+
+        function addCircle() {
+            const diameter = Math.floor(Math.random() * 50) + 30;
+            const circle = new Circle(getUniqueId(), diameter);
+            const randomX = Math.floor(Math.random() * (canvasWidth - diameter)) + diameter / 2;
+            const randomY = Math.floor(Math.random() * (canvasHeight - diameter)) + diameter / 2;
+            circle.setPosition(randomX, randomY);
+            drawShape(circle);
+        }
+
+        function drawShape(shape) {
+            ctx.save();
+            ctx.translate(shape.getPosition().x, shape.getPosition().y);
+            ctx.rotate(shape.rotation);
+            
+            if (shape.getShapeName() === 'square') {
+                ctx.fillStyle = 'blue';
+                ctx.fillRect(-shape.getSize().width / 2, -shape.getSize().height / 2, shape.getSize().width, shape.getSize().height);
+            } else if (shape.getShapeName() === 'circle') {
+                ctx.fillStyle = 'red';
+                ctx.beginPath();
+                ctx.arc(0, 0, shape.getDiameter(), 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function getUniqueId() {
+            return Math.floor(Math.random() * 1000);
+        }
+
+    </script>
+</body>
+
+</html>
