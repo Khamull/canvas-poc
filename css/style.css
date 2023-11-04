@@ -1,3 +1,6 @@
 #canvasContainer {
     border: 10px solid #000;
   }
+  canvas {
+    display: block;
+  }
