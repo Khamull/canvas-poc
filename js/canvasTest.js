@@ -4,21 +4,26 @@ const ctx = canvas.getContext('2d');
 const addSquareButton = document.getElementById('addSquareButton');
 const addRectangleButton = document.getElementById('addRectangleButton');
 const refreshButton = document.getElementById('refreshButton');
-
-let isDragging = false;
-let selectedSquare = null;
-
 addSquareButton.addEventListener('click', addSquare);
 addRectangleButton.addEventListener('click', addRectangle);
 refreshButton.addEventListener('click', refreshCanvas);
+canvas.addEventListener('mouseover', handleMouseOver);
+canvas.addEventListener('mouseout', handleMouseOut);
+let isDragging = false;
+
+let shapes = [];
+let squares = [];
+
+let selectedSquare = null;
+let selectedShape = null;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let squares = [];
 
 refreshCanvas();
 populateProjectDropdown();
+
 function addSquare() {
   const newSquare = {
     shapeName: 'Square', 
@@ -30,7 +35,9 @@ function addSquare() {
     color: getRandomColor(),
     prevX: 0,
     prevY: 0,
-    rotation: 0 // Initialize rotation to 0 degrees
+    rotation: 0,
+    isSelected: false,  // Adicionando isSelected
+    isHovered: false    // Adicionando isHovered
   };
 
   for (let i = 0; i < squares.length; i++) {
@@ -56,7 +63,9 @@ function addRectangle() {
     color: getRandomColor(),
     prevX: 0,
     prevY: 0,
-    rotation: 0 // New property for rotation angle
+    rotation: 0,
+    isSelected: false,  // Adicionando isSelected
+    isHovered: false    // Adicionando isHovered
   };
 
   for (let i = 0; i < squares.length; i++) {
@@ -80,14 +89,9 @@ function getRandomColor() {
   return color;
 }
 
-// Modify drawSquare function to account for rotation
 function drawSquare(square) {
-  ctx.translate(square.x + square.width / 2, square.y + square.height / 2);
-  ctx.rotate(square.rotation * Math.PI / 180);
   ctx.fillStyle = square.color;
-  ctx.fillRect(-square.width / 2, -square.height / 2, square.width, square.height);
-  ctx.rotate(-square.rotation * Math.PI / 180);
-  ctx.translate(-(square.x + square.width / 2), -(square.y + square.height / 2));
+  ctx.fillRect(square.x, square.y, square.width, square.height);
 }
 
 function isMouseInsideSquare(square, mouseX, mouseY) {
@@ -114,10 +118,15 @@ function addEventListeners() {
         break;
       }
     }
+
+    if (selectedSquare) {
+      selectedSquare.isSelected = true;
+      redrawCanvas();
+    }
   });
 
   document.addEventListener('mousemove', (event) => {
-    if (isDragging) {
+     if (isDragging) {
       const mouseX = event.clientX - canvas.getBoundingClientRect().left;
       const mouseY = event.clientY - canvas.getBoundingClientRect().top;
   
@@ -136,11 +145,18 @@ function addEventListeners() {
       selectedSquare.prevY = selectedSquare.y;  // Update prevX and prevY
       redrawCanvas();
     }
+    else {
+      handleMouseOver(e);
+    }
   });
 
   document.addEventListener('mouseup', () => {
     isDragging = false;
-    selectedSquare = null;
+    if (selectedSquare) {
+      selectedSquare.isSelected = false;
+      selectedSquare = null;
+      redrawCanvas();
+    }
   });
 }
 
@@ -149,6 +165,12 @@ function redrawCanvas() {
 
   for (let i = 0; i < squares.length; i++) {
     drawSquare(squares[i]);
+
+    if (squares[i].isSelected || squares[i].isHovered) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'black';
+      ctx.strokeRect(squares[i].x, squares[i].y, squares[i].width, squares[i].height);
+    }
   }
 }
 
@@ -232,3 +254,19 @@ function countProjects() {
   return projects.length;
 }
 
+function handleMouseOver(e) {
+    const mouseX = e.clientX - canvas.getBoundingClientRect().left;
+    const mouseY = e.clientY - canvas.getBoundingClientRect().top;
+
+    const hoveredSquare = squares.find(square => isMouseInsideSquare(square, mouseX, mouseY));
+
+    if (hoveredSquare) {
+        hoveredSquare.isHovered = true;
+        redrawCanvas();
+    }
+}
+
+function handleMouseOut() {
+    squares.forEach(square => square.isHovered = false);
+    redrawCanvas();
+}
