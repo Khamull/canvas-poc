@@ -5,21 +5,21 @@
 </head>
 
 <body>
-    <h1>This is Canvas Test!</h1>
+    <h1>Teste de Desenho em Canvas</h1>
     <h2>Hellow World!</h2>
-    <p>Use the buttons bellow to add Squares and Rectangles to the canva and move them around!</p>
-    <button id="addSquareButton">Add Square</button>
-    <button id="addRectangleButton">Add Rectangle</button>
+    <p>Use os Botões Para Adicionar Quadrados e Retangulos e Move-los</p>
+    <button id="addSquareButton">Quadrado</button>
+    <button id="addRectangleButton">Renragulo</button>
     <div class="slidecontainer">
         <p>Angulo</p>
         <input type="range" min="-360" max="360" value="0" id="slider">
     </div>
     <button id="refreshButton">Refresh</button>
-    <button onclick="saveProjectData()">Save Project</button>
+    <button onclick="saveProjectData()">Salavar Projeto</button>
     <select id="projectDropdown">
-        <option value="" disabled selected>Select a project</option>
+        <option value="" disabled selected>Selecione um Projeto</option>
     </select>
-    <button onclick="loadSelectedProject()">Load Project</button>
+    <button onclick="loadSelectedProject()">Carregar Projeto Selecionado</button>
 
     <div id="canvasContainer">
         <canvas id="myCanvas" width="800" height="600"></canvas>

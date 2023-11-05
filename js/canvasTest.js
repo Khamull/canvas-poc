@@ -224,11 +224,11 @@ function generateJSON() {
 // Function to save project data
 function saveProjectData() {
   const jsonData = generateJSON();
-  const projectName = prompt('Enter a project name (or leave blank for project number):');
+  const projectName = prompt('Informe um Nome de Projeto: ');
   const id = countProjects() + 1;
   const project = {
     id: id,
-    name: projectName || `Project ${projectIdentifier}`,
+    name: projectName || `Projeto ${projectIdentifier}`,
     data: jsonData
   };
 
