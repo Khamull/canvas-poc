@@ -4,16 +4,21 @@ const ctx = canvas.getContext('2d');
 const addSquareButton = document.getElementById('addSquareButton');
 const addRectangleButton = document.getElementById('addRectangleButton');
 const refreshButton = document.getElementById('refreshButton');
+const rotationSlider = document.getElementById('slider');
+
+rotationSlider.oninput = function() {
+  console.log(this.value);
+  Rotation(this.value);
+}
+
 addSquareButton.addEventListener('click', addSquare);
 addRectangleButton.addEventListener('click', addRectangle);
 refreshButton.addEventListener('click', refreshCanvas);
-canvas.addEventListener('mouseover', handleMouseOver);
-canvas.addEventListener('mouseout', handleMouseOut);
 let isDragging = false;
 
 let shapes = [];
 let squares = [];
-
+let LastSelected = null;
 let selectedSquare = null;
 let selectedShape = null;
 
@@ -89,9 +94,21 @@ function getRandomColor() {
   return color;
 }
 
+// function drawSquare(square) {
+//   ctx.fillStyle = square.color;
+//   ctx.fillRect(square.x, square.y, square.width, square.height);
+// }
+
 function drawSquare(square) {
+  ctx.save(); // Salva o estado atual do contexto
+
+  ctx.translate(square.x + square.width / 2, square.y + square.height / 2); // Move o ponto de origem para o centro do quadrado
+  ctx.rotate((Math.PI / 180) * square.rotation); // Aplica a rotação em radianos
+
   ctx.fillStyle = square.color;
-  ctx.fillRect(square.x, square.y, square.width, square.height);
+  ctx.fillRect(-square.width / 2, -square.height / 2, square.width, square.height); // Desenha o quadrado centrado
+
+  ctx.restore(); // Restaura o estado do contexto para antes da rotação
 }
 
 function isMouseInsideSquare(square, mouseX, mouseY) {
@@ -112,10 +129,19 @@ function addEventListeners() {
     const mouseY = event.clientY - canvas.getBoundingClientRect().top;
 
     for (let i = squares.length - 1; i >= 0; i--) {
+
       if (isMouseInsideSquare(squares[i], mouseX, mouseY)) {
         isDragging = true;
+        squares[i].isSelected = true;
+        
         selectedSquare = squares[i];
+        LastSelected = selectedSquare.Id;
+        // console.log(selectedSquare);
+        // console.log(LastSelected);
         break;
+      }
+      else {
+        squares[i].isSelected = false;
       }
     }
 
@@ -145,9 +171,6 @@ function addEventListeners() {
       selectedSquare.prevY = selectedSquare.y;  // Update prevX and prevY
       redrawCanvas();
     }
-    else {
-      handleMouseOver(e);
-    }
   });
 
   document.addEventListener('mouseup', () => {
@@ -167,9 +190,16 @@ function redrawCanvas() {
     drawSquare(squares[i]);
 
     if (squares[i].isSelected || squares[i].isHovered) {
+      ctx.save(); // Salva o estado atual do contexto
+
+      ctx.translate(squares[i].x + squares[i].width / 2, squares[i].y + squares[i].height / 2); // Move o ponto de origem para o centro do quadrado
+      ctx.rotate((Math.PI / 180) * squares[i].rotation); // Aplica a rotação em radianos
+
       ctx.lineWidth = 3;
       ctx.strokeStyle = 'black';
-      ctx.strokeRect(squares[i].x, squares[i].y, squares[i].width, squares[i].height);
+      ctx.strokeRect(-squares[i].width / 2, -squares[i].height / 2, squares[i].width, squares[i].height); // Desenha o retângulo de seleção centrado
+
+      ctx.restore(); // Restaura o estado do contexto para antes da rotação
     }
   }
 }
@@ -254,19 +284,13 @@ function countProjects() {
   return projects.length;
 }
 
-function handleMouseOver(e) {
-    const mouseX = e.clientX - canvas.getBoundingClientRect().left;
-    const mouseY = e.clientY - canvas.getBoundingClientRect().top;
-
-    const hoveredSquare = squares.find(square => isMouseInsideSquare(square, mouseX, mouseY));
-
-    if (hoveredSquare) {
-        hoveredSquare.isHovered = true;
-        redrawCanvas();
+function Rotation(value) {
+  squares.forEach(element => {
+    if (LastSelected == element.Id)
+    {
+      element.rotation = value;
+      console.log("Updated Element: "+element.rotation);
     }
-}
-
-function handleMouseOut() {
-    squares.forEach(square => square.isHovered = false);
-    redrawCanvas();
+  });
+  redrawCanvas();
 }
