@@ -9,6 +9,12 @@
     <button id="addSquareButton">Add Square</button>
     <button id="addRectangleButton">Add Rectangle</button>
     <button id="refreshButton">Refresh</button>
+    <button onclick="saveProjectData()">Save Project</button>
+    <select id="projectDropdown">
+        <option value="" disabled selected>Select a project</option>
+      </select>
+      <button onclick="loadSelectedProject()">Load Project</button>
+
     <div id="canvasContainer">
         <canvas id="myCanvas" width="800" height="600"></canvas>
     </div>      
