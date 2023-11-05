@@ -78,7 +78,6 @@ function handleMouseMove(e) {
 }
 
 function handleMouseOver(e) {
-    console.log("Mouse Over Start");
     const mouseX = e.clientX - canvas.offsetLeft;
     const mouseY = e.clientY - canvas.offsetTop;
 
@@ -112,6 +111,7 @@ function handleClick() {
     const clickedShape = hitTest(mouseX, mouseY);
 
     if (clickedShape) {
+         clearSelection();
         if (selectedShape && selectedShape !== clickedShape) {
             selectedShape.isSelected = false;
         }
@@ -126,6 +126,14 @@ function handleClick() {
 
         drawShapes();
     }
+}
+
+function clearSelection() {
+    shapes.forEach(shape => {
+        shape.isSelected = false;
+    });
+    selectedShape = null;
+    drawShapes();
 }
 
 canvas.addEventListener('mousedown', handleMouseDown);
