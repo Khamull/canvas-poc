@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Exemplo de Rotação e Redimensionamento em Canvas</title>
+</head>
+
+<body>
+    <canvas id="meuCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Obtenha o contexto do canvas
+        var canvas = document.getElementById("meuCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // Define as coordenadas do retângulo e suas dimensões iniciais
+        var retangulo = { x: 100, y: 100, largura: 100, altura: 50 };
+
+        // Define a posição das setas emoji
+        var setas = [
+            { x: retangulo.x - 30, y: retangulo.y - 30, emoji: "⬄", acao: "redimensionar" }, // U+2B04 (Seta Esquerda/Direita)
+            { x: retangulo.x + retangulo.largura - 20, y: retangulo.y - 30, emoji: "⬄", acao: "redimensionar" }, // U+2B04 (Seta Esquerda/Direita)
+            { x: retangulo.x - 30, y: retangulo.y + retangulo.altura - 20, emoji: "⬄", acao: "redimensionar" }, // U+2B04 (Seta Esquerda/Direita)
+            { x: retangulo.x + retangulo.largura - 20, y: retangulo.y + retangulo.altura - 20, emoji: "⬄", acao: "redimensionar" } // U+2B04 (Seta Esquerda/Direita)
+        ];
+
+        // Atualiza a função para desenhar o retângulo
+        function desenharRetangulo() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "blue";
+            ctx.fillRect(retangulo.x, retangulo.y, retangulo.largura, retangulo.altura);
+
+            // Desenhe as setas emoji
+            ctx.font = "30px sans-serif";
+            ctx.fillStyle = "black";
+            setas.forEach(function (seta) {
+                ctx.fillText(seta.emoji, seta.x, seta.y);
+            });
+        }
+
+        // Verifica se o mouse está sobre uma seta emoji
+        function verificarMouseSobreSeta(event) {
+            var mouseX = event.clientX - canvas.getBoundingClientRect().left;
+            var mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+            return setas.find(function (seta) {
+                return (
+                    mouseX >= seta.x && mouseX <= seta.x + 40 &&
+                    mouseY >= seta.y - 40 && mouseY <= seta.y
+                );
+            });
+        }
+
+        // Evento de clique no mouse para iniciar a ação
+        var acaoAtiva = null;
+        var pontoInicial = null;
+
+        canvas.addEventListener("mousedown", function (event) {
+            acaoAtiva = verificarMouseSobreSeta(event);
+            pontoInicial = { x: event.clientX, y: event.clientY };
+        });
+
+        document.addEventListener("mousemove", function (event) {
+            if (acaoAtiva) {
+                var deltaX = event.clientX - pontoInicial.x;
+                var deltaY = event.clientY - pontoInicial.y;
+
+                if (acaoAtiva.acao === "redimensionar") {
+                    retangulo.largura += deltaX;
+                    retangulo.altura += deltaY;
+                }
+
+                pontoInicial = { x: event.clientX, y: event.clientY };
+
+                desenharRetangulo();
+            }
+        });
+
+        document.addEventListener("mouseup", function (event) {
+            acaoAtiva = null;
+            pontoInicial = null;
+        });
+
+        // Inicialize desenhando o retângulo
+        desenharRetangulo();
+    </script>
+</body>
+
+</html>
